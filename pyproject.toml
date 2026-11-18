@@ -5,9 +5,47 @@ build-backend = "hatchling.build"
 [project]
 name = "downloader"
 version = "0.1"
+requires-python = ">=3.11"
 dependencies = [
     "yt-dlp"
 ]
 
 [project.scripts]
 downloader = "downloader:main"
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "basedpyright"
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["."]
+
+[tool.ruff.lint]
+select = ["ALL"]
+# https://docs.astral.sh/ruff/rules/
+ignore = [
+    "D",
+    "COM812",
+    "ISC001",
+    "FBT",
+    "ERA001",
+    "T201",
+]
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["downloader"]
+
+[tool.ruff.lint.flake8-copyright]
+author = "Asano Sumi"
+
+[tool.basedpyright]
+include = ["downloader"]
+pythonVersion = "3.11"
+typeCheckingMode = "recommended"
+reportUnnecessaryTypeIgnoreComment = "error"
+reportUnusedCallResult = false

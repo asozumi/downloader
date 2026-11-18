@@ -1,34 +1,48 @@
-import sys
+# Copyright (c) 2026 Asano Sumi
+
+import os
 import signal
-
+import sys
 from pathlib import Path
-from PySide6.QtCore import QTimer, QUrl
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtQml import QQmlApplicationEngine
 
-from .backend import Backend
+from PySide6.QtCore import QUrl
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtWidgets import QApplication
+
+from .backend.queue_controller import QueueController
+
+
+class Application:
+    def __init__(self) -> None:
+        os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "org.kde.desktop")
+
+        self.app: QApplication = QApplication(sys.argv)
+        self.app.setApplicationName("downloader")
+        self.app.setApplicationDisplayName("Downloader")
+
+        self.engine: QQmlApplicationEngine = QQmlApplicationEngine()
+
+        self.queue_controller: QueueController = QueueController()
+        self.engine.rootContext().setContextProperty("queueController", self.queue_controller)
+
+    def load_gui(self) -> bool:
+        qml_file = Path(__file__).parent / "gui" / "ApplicationWindow.qml"
+        self.engine.load(QUrl.fromLocalFile(str(qml_file)))
+        return bool(self.engine.rootObjects())
+
+    def start(self) -> int:
+        if not self.load_gui():
+            return -1
+
+        return self.app.exec()
+
 
 def main() -> int:
-    app = QGuiApplication(sys.argv)
-    signal.signal(signal.SIGINT, lambda *args: app.quit())
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    app = Application()
 
-    timer = QTimer()
-    timer.start(100)
-    timer.timeout.connect(lambda: None)
+    return app.start()
 
-    engine = QQmlApplicationEngine()
 
-    backend = Backend()
-    engine.setInitialProperties({"backend": backend})
-
-    qml_entry = Path(__file__).parent / "gui" / "Main.qml"
-    engine.load(QUrl.fromLocalFile(str(qml_entry)))
-
-    if not engine.rootObjects():
-        print(f"Failed to load QML: {qml_entry}", file=sys.stderr)
-        return -1
-
-    return app.exec()
-    
 if __name__ == "__main__":
     sys.exit(main())
