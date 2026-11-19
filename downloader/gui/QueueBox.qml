@@ -42,6 +42,7 @@ RowLayout {
         enabled: urlField.valid
         
         onClicked: {
+            queue.add(urlField.text)
             urlField.clear();
         }
     }

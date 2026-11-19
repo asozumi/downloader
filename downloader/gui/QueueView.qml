@@ -15,19 +15,15 @@ Controls.ScrollView {
         id: listView
         clip: true
         spacing: Kirigami.Units.mediumSpacing
-
-        model: [
-            { name: "Item 1", detail: "Details for item 1" },
-            { name: "Item 2", detail: "Details for item 2" },
-            { name: "Item 3", detail: "Details for item 3" }
-        ]
+        model: queue.model
 
         delegate: Controls.ItemDelegate {
-            required property var modelData
+            id: row
 
-            width: ListView.view.width
-            text: modelData.name
-            padding: Kirigami.Units.largeSpacing
+            required property string url
+            required property real progress
+
+            text: url
         }
     }
 }

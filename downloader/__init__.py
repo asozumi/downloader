@@ -9,7 +9,7 @@ from PySide6.QtCore import QUrl
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication
 
-from .backend.queue_controller import QueueController
+from .controller.queue import QueueController
 
 
 class Application:
@@ -23,7 +23,8 @@ class Application:
         self.engine: QQmlApplicationEngine = QQmlApplicationEngine()
 
         self.queue_controller: QueueController = QueueController()
-        self.engine.rootContext().setContextProperty("queueController", self.queue_controller)
+        context = self.engine.rootContext()
+        context.setContextProperty("queue", self.queue_controller)
 
     def load_gui(self) -> bool:
         qml_file = Path(__file__).parent / "gui" / "ApplicationWindow.qml"

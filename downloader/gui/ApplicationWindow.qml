@@ -20,7 +20,6 @@ Kirigami.ApplicationWindow {
                 icon.name: "edit-clear"
                 enabled: true
                 tooltip: "Clear queue"
-
                 onTriggered: clearConfirmationDialog.open()
             }
         ]
@@ -45,7 +44,7 @@ Kirigami.ApplicationWindow {
 
             standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
 
-            onAccepted: queueController.clear()
+            onAccepted: queue.clear()
         }
     }
 }
